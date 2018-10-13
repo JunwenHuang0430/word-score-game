@@ -1,3 +1,12 @@
+/*
+Sorry about the incomplete code. I started the test quite late and I am not quite familiar with Java. Below is a brief explanation
+of my algorithm and I would really appreciate if you can take a look at it: 
+First find all the permutations that can be generated with the letters in the boxes (Here I assume that the length of the word is 
+no less than 2. In other words, each word has no less than 2 letters.) Then filter out those permutations that are not valid English 
+words. Calculate the scores for the valid permutations and pick the one with the largest score.
+Thanks for this test, it refreshs my Java knowledge; and I have learnt a lot while I went through the template given .
+*/
+
 var BAG_OF_LETTERS = [
 		new Letter('_', 2, 0),
 		new Letter('_', 2, 0),
@@ -103,6 +112,8 @@ var BAG_OF_LETTERS = [
 
 var YOUR_HAND = new Array();
 var SCORE = 0;
+
+
 function startGame() {
 	addNumbersFromBag();
 	displayHand();
@@ -147,11 +158,57 @@ function getAvailableLetter(){
 	return randomLetter[0];
 }
 
+function combination(String[] arr, String data, int start, int end, 
+                     int index, int r, ArrayList<String> result){
+    if (len(data) == r){ 
+        result.append(data);
+        return; 
+    } 
+
+    for (int i = start; i <= end && end - i + 1 >= r - index; i++){ 
+        data = data + arr[i]; 
+        combinationUtil(arr, data, i+1, end, index + 1, r); 
+    } 
+} 
+
+function permutation(String prefix, String str, ArrayList<String> result){
+    int n = str.length();
+    if (n == 0){
+		result.append(prefix);
+	}
+    else {
+        for (int i = 0; i < n; i++)
+            permutation(prefix + str.charAt(i), str.substring(0, i) + str.substring(i+1, n));
+    }
+}
 
 function findWordToUse(){
- //TODO Your job starts here.
-	alert("Your code needs to go here");	
+	String wordToUse = "";
+	int wordPoint = 0;
+	for (len = 2; len <= YOUR_HAND.length; len++) {
+		String data = "";
+		ArrayList<String> comb =  new ArrayList<String>();
+		combination(YOUR_HAND, data, 0, YOUR_HAND.length - 1, 0, len, comb)
+		for(String c in comb){
+			ArrayList<String> perm =  new ArrayList<String>(); 
+			permutation("", c, perm);
+			for(String p in perm){
+				if(isThisAWord(p)){
+					lett = p.toUpperCase().split("");
+					for(l in lett){
+						addToScore(l);
+					}
+					if(SCORE > wordPoint){
+						wordToUse = p;
+						wordPoint = SCORE;
+					}
+					SCORE = 0;
+				}
+			}			
+		} 
+	}
 }
+
 function humanFindWordToUse(){
 	
 	 var humanFoundWord = $( "#human-word-input").val();
